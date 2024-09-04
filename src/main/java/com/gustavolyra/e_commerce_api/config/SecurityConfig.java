@@ -1,4 +1,4 @@
-package com.gustavolyra.e_commerce_api.config.security;
+package com.gustavolyra.e_commerce_api.config;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

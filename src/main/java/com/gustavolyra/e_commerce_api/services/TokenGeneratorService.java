@@ -24,7 +24,7 @@ public class TokenGeneratorService {
     }
 
 
-    private String generateToken(User user) {
+    public String generateToken(User user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
         return Jwts.builder().setClaims(claims)
