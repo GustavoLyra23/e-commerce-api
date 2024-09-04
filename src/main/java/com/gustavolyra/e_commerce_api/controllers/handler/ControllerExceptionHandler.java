@@ -1,8 +1,9 @@
 package com.gustavolyra.e_commerce_api.controllers.handler;
 
-import com.gustavolyra.e_commerce_api.dto.FieldError;
-import com.gustavolyra.e_commerce_api.dto.StandardError;
-import com.gustavolyra.e_commerce_api.dto.ValidationError;
+import com.gustavolyra.e_commerce_api.dto.error.FieldError;
+import com.gustavolyra.e_commerce_api.dto.error.StandardError;
+import com.gustavolyra.e_commerce_api.dto.error.ValidationError;
+import com.gustavolyra.e_commerce_api.services.exceptions.DatabaseConflictException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,11 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(status).body(validationError);
     }
 
+    @ExceptionHandler(DatabaseConflictException.class)
+    public ResponseEntity<StandardError> handleMethodArgumentNotValidException(DatabaseConflictException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        StandardError error = new StandardError(Instant.now(), status.value(), ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
 
 }

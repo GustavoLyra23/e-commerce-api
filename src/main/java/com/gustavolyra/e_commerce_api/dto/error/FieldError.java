@@ -1,4 +1,4 @@
-package com.gustavolyra.e_commerce_api.dto;
+package com.gustavolyra.e_commerce_api.dto.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

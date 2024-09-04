@@ -2,6 +2,7 @@ package com.gustavolyra.e_commerce_api.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+@NoArgsConstructor
 @Entity
 @Table(name = "tb_user")
 public class User implements UserDetails {
@@ -23,6 +25,7 @@ public class User implements UserDetails {
 
     private String password;
 
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -32,6 +35,13 @@ public class User implements UserDetails {
     @Getter
     @OneToMany(mappedBy = "user")
     private Set<Product> products = new HashSet<>();
+
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -68,5 +78,8 @@ public class User implements UserDetails {
         return true;
     }
 
+    public void addRole(Role role) {
+        roles.add(role);
+    }
 
 }
