@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "tb_user_credentials")
+@Table(name = "tb_user")
 public class User implements UserDetails {
 
     @Getter

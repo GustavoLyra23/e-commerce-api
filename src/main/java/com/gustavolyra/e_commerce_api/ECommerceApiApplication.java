@@ -1,8 +1,6 @@
 package com.gustavolyra.e_commerce_api;
 
-import com.gustavolyra.e_commerce_api.entities.Product;
-import com.gustavolyra.e_commerce_api.entities.ProductType;
-import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
+import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,10 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ECommerceApiApplication implements CommandLineRunner {
 
-    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    public ECommerceApiApplication(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ECommerceApiApplication(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public static void main(String[] args) {
@@ -22,7 +20,7 @@ public class ECommerceApiApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        productRepository.save(new Product(null, "PC", "Very good computer", 23.00,
-                ProductType.ELETRONICS));
+        var user = userRepository.findById(1L);
+        System.out.println(user.get().getAuthorities());
     }
 }
