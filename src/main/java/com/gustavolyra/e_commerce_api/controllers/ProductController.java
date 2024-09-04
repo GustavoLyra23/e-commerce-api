@@ -1,13 +1,14 @@
 package com.gustavolyra.e_commerce_api.controllers;
 
-import com.gustavolyra.e_commerce_api.dto.ProductDtoResponse;
+import com.gustavolyra.e_commerce_api.dto.product.ProductDtoRequest;
+import com.gustavolyra.e_commerce_api.dto.product.ProductDtoResponse;
 import com.gustavolyra.e_commerce_api.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/products")
@@ -24,5 +25,13 @@ public class ProductController {
         var products = productService.getAllProducts(pageable);
         return ResponseEntity.ok(products);
     }
+
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
+    public ResponseEntity<ProductDtoResponse> createProduct(@Valid @RequestBody ProductDtoRequest productDtoRequest) {
+        var product = productService.createProduct(productDtoRequest);
+        return ResponseEntity.ok(product);
+    }
+
 
 }

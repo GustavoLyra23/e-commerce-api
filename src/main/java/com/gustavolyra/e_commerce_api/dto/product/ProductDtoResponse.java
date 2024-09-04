@@ -1,4 +1,4 @@
-package com.gustavolyra.e_commerce_api.dto;
+package com.gustavolyra.e_commerce_api.dto.product;
 
 import com.gustavolyra.e_commerce_api.entities.Product;
 import com.gustavolyra.e_commerce_api.entities.ProductType;

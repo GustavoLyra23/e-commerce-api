@@ -7,6 +7,7 @@ import com.gustavolyra.e_commerce_api.services.exceptions.DatabaseConflictExcept
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,8 +37,15 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<StandardError> handleMethodArgumentNotValidException(UsernameNotFoundException ex, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        HttpStatus status = HttpStatus.FORBIDDEN;
         StandardError error = new StandardError(Instant.now(), status.value(), ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<StandardError> handleMethodArgumentNotValidException(AuthorizationDeniedException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        StandardError error = new StandardError(Instant.now(), status.value(), "Acess denied", request.getRequestURI());
         return ResponseEntity.status(status).body(error);
     }
 
