@@ -16,6 +16,7 @@ public class ProductDtoResponse {
     private String description;
     private ProductType productType;
     private String seller;
+    private String pictureUrl;
 
     public ProductDtoResponse(Product product) {
         id = product.getUuid();
@@ -23,6 +24,7 @@ public class ProductDtoResponse {
         description = product.getDescription();
         productType = product.getType();
         seller = product.getUser().getUsername();
+        pictureUrl = product.getProductPictueUrl();
     }
 
 

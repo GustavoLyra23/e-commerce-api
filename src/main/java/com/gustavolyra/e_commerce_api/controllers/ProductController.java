@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
+
 @RestController
 @RequestMapping("/v1/products")
 public class ProductController {
@@ -28,10 +31,13 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
-    public ResponseEntity<ProductDtoResponse> createProduct(@Valid @RequestBody ProductDtoRequest productDtoRequest) {
-        var product = productService.createProduct(productDtoRequest);
+    public ResponseEntity<ProductDtoResponse> createProduct(@Valid @ModelAttribute ProductDtoRequest dtoRequest) throws IOException {
+        var product = productService.createProduct(dtoRequest);
         return ResponseEntity.ok(product);
     }
+
+
+
 
 
 }
