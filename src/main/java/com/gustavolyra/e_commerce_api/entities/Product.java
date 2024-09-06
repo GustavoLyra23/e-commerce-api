@@ -1,5 +1,6 @@
 package com.gustavolyra.e_commerce_api.entities;
 
+import com.gustavolyra.e_commerce_api.enums.ProductType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public class Product {
 
     private String productPictueUrl;
 
+    private Integer stock;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

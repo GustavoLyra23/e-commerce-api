@@ -3,9 +3,10 @@ package com.gustavolyra.e_commerce_api.services;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoRequest;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoResponse;
 import com.gustavolyra.e_commerce_api.entities.Product;
-import com.gustavolyra.e_commerce_api.entities.ProductType;
+import com.gustavolyra.e_commerce_api.enums.ProductType;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
+import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,11 +38,17 @@ public class ProductService {
     @Transactional
     public ProductDtoResponse createProduct(ProductDtoRequest dtoRequest) throws IOException {
         var user = userService.findUserFromAuthenticationContext();
+
         Product product = new Product();
         product.setDescription(dtoRequest.description());
         product.setName(dtoRequest.name());
         product.setPrice(dtoRequest.price());
-        product.setType(ProductType.valueOf(dtoRequest.type()));
+        product.setStock(dtoRequest.stock());
+        try {
+            product.setType(ProductType.valueOf(dtoRequest.type()));
+        } catch (IllegalArgumentException e) {
+            throw new ResourceNotFoundException("Product type not found");
+        }
         product.setUser(userRepository.getReferenceById(user.getId()));
 
         String url = s3Service.addFileToBucket(dtoRequest.file());

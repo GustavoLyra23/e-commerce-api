@@ -30,8 +30,6 @@ public class S3Service {
         metadata.setContentDisposition("inline");
         amazonS3.amazonS3().putObject(new PutObjectRequest(bucketName, fileName, file.getInputStream(), metadata));
         return amazonS3.amazonS3().getUrl(bucketName, fileName).toString();
-
-
     }
 
 

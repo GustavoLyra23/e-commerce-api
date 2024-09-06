@@ -16,7 +16,6 @@ import java.util.Date;
 @Service
 public class TokenGeneratorService {
 
-
     private final SecretKey key;
 
     public TokenGeneratorService() {

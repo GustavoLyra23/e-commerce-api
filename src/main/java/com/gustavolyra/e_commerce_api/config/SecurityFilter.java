@@ -29,6 +29,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = getTokenFromRequest(request);
         var emailFromToken = tokenGeneratorService.validateToken(token);
+
         if (token != null && emailFromToken != null) {
             var user = userRepository.findByEmail(emailFromToken).orElseThrow(() -> new UsernameNotFoundException("User not found"));
             var authorities = user.getAuthorities();

@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(nativeQuery = true, value = "SELECT COUNT(email) > 0 FROM tb_user WHERE email = :username")
     boolean existsByEmail(String username);
 
+
 }
