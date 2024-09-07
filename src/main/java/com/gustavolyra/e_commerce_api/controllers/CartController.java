@@ -17,7 +17,6 @@ public class CartController {
         this.cartService = cartService;
     }
 
-
     @PostMapping("/{productId}")
     @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
     public ResponseEntity<Void> addProductToCart(@PathVariable("productId") UUID productId, @RequestParam("quantity") Integer quantity) {
@@ -25,5 +24,16 @@ public class CartController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/checkout")
+    @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
+    public ResponseEntity<String> checkout() {
+        var url = cartService.checkout();
+        return ResponseEntity.ok(url);
+    }
 
+    @PostMapping("/webhook")
+    public ResponseEntity<Void> test(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
+        cartService.cartWebHook(payload, sigHeader);
+        return ResponseEntity.noContent().build();
+    }
 }

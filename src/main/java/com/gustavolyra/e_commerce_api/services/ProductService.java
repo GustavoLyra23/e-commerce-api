@@ -7,6 +7,7 @@ import com.gustavolyra.e_commerce_api.enums.ProductType;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,12 @@ public class ProductService {
 
     @Transactional
     public ProductDtoResponse createProduct(ProductDtoRequest dtoRequest) throws IOException {
+        String contentType = dtoRequest.file().getContentType();
+        if (!"image/jpeg".equals(contentType)) {
+            throw new BadRequestException("Only JPEG images are allowed.");
+        }
+
+
         var user = userService.findUserFromAuthenticationContext();
 
         Product product = new Product();

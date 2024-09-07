@@ -13,6 +13,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
+@Table(name = "tb_cart_item")
 public class CartItem {
 
     @Id
