@@ -1,4 +1,4 @@
-package com.gustavolyra.e_commerce_api.entities;
+package com.gustavolyra.e_commerce_api.enums;
 
 public enum ProductType {
 

@@ -1,7 +1,7 @@
 package com.gustavolyra.e_commerce_api.dto.product;
 
 import com.gustavolyra.e_commerce_api.entities.Product;
-import com.gustavolyra.e_commerce_api.entities.ProductType;
+import com.gustavolyra.e_commerce_api.enums.ProductType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
