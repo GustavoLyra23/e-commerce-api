@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.UUID;
 
 
 @RestController
@@ -36,8 +37,11 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") UUID uuid) {
+        productService.deleteProuctById(uuid);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }
-
-
-
-

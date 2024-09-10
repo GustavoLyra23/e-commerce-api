@@ -3,17 +3,19 @@ package com.gustavolyra.e_commerce_api.services;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoRequest;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoResponse;
 import com.gustavolyra.e_commerce_api.entities.Product;
-import com.gustavolyra.e_commerce_api.enums.ProductType;
+import com.gustavolyra.e_commerce_api.entities.ProductType;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
+import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -38,24 +40,12 @@ public class ProductService {
 
     @Transactional
     public ProductDtoResponse createProduct(ProductDtoRequest dtoRequest) throws IOException {
-        String contentType = dtoRequest.file().getContentType();
-        if (!"image/jpeg".equals(contentType)) {
-            throw new BadRequestException("Only JPEG images are allowed.");
-        }
-
-
         var user = userService.findUserFromAuthenticationContext();
-
         Product product = new Product();
         product.setDescription(dtoRequest.description());
         product.setName(dtoRequest.name());
         product.setPrice(dtoRequest.price());
-        product.setStock(dtoRequest.stock());
-        try {
-            product.setType(ProductType.valueOf(dtoRequest.type()));
-        } catch (IllegalArgumentException e) {
-            throw new ResourceNotFoundException("Product type not found");
-        }
+        product.setType(ProductType.valueOf(dtoRequest.type()));
         product.setUser(userRepository.getReferenceById(user.getId()));
 
         String url = s3Service.addFileToBucket(dtoRequest.file());
@@ -64,4 +54,20 @@ public class ProductService {
         product = productRepository.save(product);
         return new ProductDtoResponse(product);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void deleteProuctById(UUID uuid) {
+        var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        var user = userService.findUserFromAuthenticationContext();
+
+        //verifies if the user is an admin, if he's not an exception will be thrown
+        boolean isUserAdmin = user.getAuthorities().stream()
+                .anyMatch(x -> x.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
+       if(!isUserAdmin && !product.getUser().getUsername().equalsIgnoreCase(user.getUsername())){
+            throw new ForbiddenException("Acess denied");
+       }
+       productRepository.deleteById(uuid);
+    }
+
+
 }
