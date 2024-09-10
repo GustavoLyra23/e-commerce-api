@@ -3,7 +3,7 @@ package com.gustavolyra.e_commerce_api.services;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoRequest;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoResponse;
 import com.gustavolyra.e_commerce_api.entities.Product;
-import com.gustavolyra.e_commerce_api.entities.ProductType;
+import com.gustavolyra.e_commerce_api.enums.ProductType;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;

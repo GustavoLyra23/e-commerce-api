@@ -31,9 +31,9 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductType type;
 
-    private String productPictueUrl;
-
     private Integer stock;
+
+    private String productPictueUrl;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

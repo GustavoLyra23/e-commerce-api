@@ -38,6 +38,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Basket basket;
+
     @Getter
     @OneToMany(mappedBy = "user")
     private Set<Product> products = new HashSet<>();
