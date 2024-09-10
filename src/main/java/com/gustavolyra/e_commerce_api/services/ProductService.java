@@ -6,12 +6,16 @@ import com.gustavolyra.e_commerce_api.entities.Product;
 import com.gustavolyra.e_commerce_api.entities.ProductType;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
+import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
+import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -50,4 +54,20 @@ public class ProductService {
         product = productRepository.save(product);
         return new ProductDtoResponse(product);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void deleteProuctById(UUID uuid) {
+        var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        var user = userService.findUserFromAuthenticationContext();
+
+        //verifies if the user is an admin, if he's not an exception will be thrown
+        boolean isUserAdmin = user.getAuthorities().stream()
+                .anyMatch(x -> x.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
+       if(!isUserAdmin && !product.getUser().getUsername().equalsIgnoreCase(user.getUsername())){
+            throw new ForbiddenException("Acess denied");
+       }
+       productRepository.deleteById(uuid);
+    }
+
+
 }
