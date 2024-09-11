@@ -5,7 +5,7 @@ import com.gustavolyra.e_commerce_api.entities.BasketItem;
 import com.gustavolyra.e_commerce_api.repositories.BasketItemRepository;
 import com.gustavolyra.e_commerce_api.repositories.BasketRepository;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
-import com.gustavolyra.e_commerce_api.services.exceptions.BadRequestException;
+import com.gustavolyra.e_commerce_api.services.exceptions.InsufficientStockException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,7 +40,7 @@ public class BasketService {
     public String addProduct(UUID uuid, Integer quantity) {
         var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         if (product.getStock() < quantity) {
-            throw new BadRequestException("Invalid stock quantity");
+            throw new InsufficientStockException("Invalid stock quantity");
         }
 
         var user = userService.findUserFromAuthenticationContext();
