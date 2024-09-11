@@ -56,17 +56,21 @@ public class ProductService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void deleteProuctById(UUID uuid) {
+    public void deleteProductById(UUID uuid) {
         var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         var user = userService.findUserFromAuthenticationContext();
 
-        //verifies if the user is an admin, if he's not an exception will be thrown
+        //goes to the user role list and return true if the user is an admin or false if he's not.
         boolean isUserAdmin = user.getAuthorities().stream()
                 .anyMatch(x -> x.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
-       if(!isUserAdmin && !product.getUser().getUsername().equalsIgnoreCase(user.getUsername())){
+
+        /*verifies if the user is non admin and if he's trying to delete other users product,
+        if he's not an admin a forbidden exception will be thrown
+         */
+        if (!isUserAdmin && !product.getUser().getUsername().equalsIgnoreCase(user.getUsername())) {
             throw new ForbiddenException("Acess denied");
-       }
-       productRepository.deleteById(uuid);
+        }
+        productRepository.deleteById(uuid);
     }
 
 

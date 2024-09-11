@@ -38,8 +38,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") UUID uuid) {
-        productService.deleteProuctById(uuid);
+        productService.deleteProductById(uuid);
         return ResponseEntity.noContent().build();
     }
 
