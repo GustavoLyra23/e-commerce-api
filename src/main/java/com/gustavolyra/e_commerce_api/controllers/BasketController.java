@@ -30,4 +30,11 @@ public class BasketController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/checkout")
+    @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
+    public ResponseEntity<String> checkout() {
+        return null;
+    }
+
+
 }
