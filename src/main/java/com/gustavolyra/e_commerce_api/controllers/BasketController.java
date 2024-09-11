@@ -38,5 +38,11 @@ public class BasketController {
         return ResponseEntity.ok(paymentLink);
     }
 
+    @PostMapping("/webhook")
+    public ResponseEntity<Void> webHook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
+        basketService.webhook(payload,sigHeader);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }
