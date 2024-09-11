@@ -3,6 +3,7 @@ package com.gustavolyra.e_commerce_api.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -32,6 +33,8 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @Setter
+    @Getter
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Basket basket;
 
