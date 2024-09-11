@@ -12,41 +12,39 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 @Service
-public class StripePaymentService implements PaymentService {
-
-    private final UserService userService;
+public class StripePaymentService implements Payment {
 
     @Value("${stripe.api.key}")
-    private String stripeApiKey;
+    private String apiKey;
+    private final UserService userService;
 
     public StripePaymentService(UserService userService) {
         this.userService = userService;
     }
 
-    @Transactional()
+    @Transactional(readOnly = true)
     @Override
     public String createPaymentLink(User user) {
         try {
-            Double price = user.getCart().getItems().stream()
-                    .map(x -> x.getProduct().getPrice() * x.getQuantity()).
-                    reduce(0.0, Double::sum);
+            Double price = user.getBasket().getBasketItems().stream()
+                    .map(x -> x.getProduct().getPrice() * x.getQuantity()).reduce(0.0, Double::sum);
 
-            Stripe.apiKey = stripeApiKey;
+            Stripe.apiKey = apiKey;
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setSuccessUrl("http://localhost:8080")
-                    .putMetadata("cartId", user.getCart().getId().toString())
+                    .putMetadata("cartId", user.getBasket().getId().toString())
                     .addLineItem(SessionCreateParams.LineItem.builder().setQuantity(1L)
                             .setPriceData(SessionCreateParams.LineItem.PriceData.builder().setCurrency("usd")
                                     .setUnitAmountDecimal(BigDecimal.valueOf(price * 100.0))
                                     .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                             .setName("Cart payment").build()).build()).build()).build();
-            Session session = Session.create(params);
-            return session.getUrl();
+            return  Session.create(params).getUrl();
         } catch (StripeException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
 
 }
+

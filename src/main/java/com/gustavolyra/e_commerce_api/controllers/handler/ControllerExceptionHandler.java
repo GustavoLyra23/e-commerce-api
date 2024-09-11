@@ -3,10 +3,7 @@ package com.gustavolyra.e_commerce_api.controllers.handler;
 import com.gustavolyra.e_commerce_api.dto.error.FieldError;
 import com.gustavolyra.e_commerce_api.dto.error.StandardError;
 import com.gustavolyra.e_commerce_api.dto.error.ValidationError;
-import com.gustavolyra.e_commerce_api.services.exceptions.DatabaseConflictException;
-import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
-import com.gustavolyra.e_commerce_api.services.exceptions.InsufficientStockException;
-import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import com.gustavolyra.e_commerce_api.services.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,5 +69,13 @@ public class ControllerExceptionHandler {
         StandardError error = new StandardError(Instant.now(), status.value(), ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(error);
     }
+
+    @ExceptionHandler(PaymentCreationException.class)
+    public ResponseEntity<StandardError> handleAuthorizationDeniedException(PaymentCreationException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        StandardError error = new StandardError(Instant.now(), status.value(), ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+
 
 }

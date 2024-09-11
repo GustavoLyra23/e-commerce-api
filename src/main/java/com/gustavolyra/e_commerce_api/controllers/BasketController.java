@@ -18,6 +18,7 @@ public class BasketController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
     public ResponseEntity<Void> deleteBasket(@PathVariable("id") Long id) {
         basketService.deleteBasketById(id);
         return ResponseEntity.noContent().build();
@@ -33,7 +34,8 @@ public class BasketController {
     @GetMapping("/checkout")
     @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
     public ResponseEntity<String> checkout() {
-        return null;
+        var paymentLink = basketService.checkout();
+        return ResponseEntity.ok(paymentLink);
     }
 
 
