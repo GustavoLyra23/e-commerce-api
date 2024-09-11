@@ -33,13 +33,13 @@ public class StripePaymentService implements Payment {
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setSuccessUrl("http://localhost:8080")
-                    .putMetadata("cartId", user.getBasket().getId().toString())
+                    .putMetadata("basketId", user.getBasket().getId().toString())
                     .addLineItem(SessionCreateParams.LineItem.builder().setQuantity(1L)
                             .setPriceData(SessionCreateParams.LineItem.PriceData.builder().setCurrency("usd")
                                     .setUnitAmountDecimal(BigDecimal.valueOf(price * 100.0))
                                     .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                             .setName("Cart payment").build()).build()).build()).build();
-            return  Session.create(params).getUrl();
+            return Session.create(params).getUrl();
         } catch (StripeException e) {
             return null;
         }

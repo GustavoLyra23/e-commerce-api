@@ -8,14 +8,22 @@ import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.InsufficientStockException;
 import com.gustavolyra.e_commerce_api.services.exceptions.PaymentCreationException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import com.stripe.model.Event;
+import com.stripe.model.checkout.Session;
+import com.stripe.net.Webhook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class BasketService {
+
+    @Value("${stripe.sign.secret}")
+    private String stripeSecret;
 
     private final Payment paymentService;
     private final BasketRepository basketRepository;
@@ -82,5 +90,26 @@ public class BasketService {
 
         }
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void webhook(String payload, String header) {
+        try {
+            Event event = Webhook.constructEvent(payload, header, stripeSecret);
+            var basketId = findBasketIdFromWebHook(event);
+            basketRepository.deleteById(Long.valueOf(basketId));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private String findBasketIdFromWebHook(Event event) {
+        Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
+        if (session != null) {
+            Map<String, String> metadata = session.getMetadata();
+            return metadata.get("basketId");
+        }
+        return null;
+    }
+
 
 }
