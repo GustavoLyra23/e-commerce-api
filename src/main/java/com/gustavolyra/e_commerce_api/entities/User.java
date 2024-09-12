@@ -29,12 +29,6 @@ public class User implements UserDetails, Serializable {
 
     private String password;
 
-    @Getter
-    @Setter
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Cart cart;
-
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
