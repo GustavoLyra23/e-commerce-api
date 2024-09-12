@@ -84,13 +84,19 @@ public class BasketService {
         var basketItem = basket.getBasketItems()
                 .stream().filter(x -> x.getProduct().getUuid().equals(uuid)).findFirst().orElse(new BasketItem());
 
+        //if the item does not exist it will create a new one
         if (basketItem.getProduct() == null) {
             basketItem.setBasket(basket);
             basketItem.setProduct(product);
             log.info("Adding new product to basket: {}", uuid);
         }
 
+        /* this sets the quantity of an basketItem based on the item quantity existence, if the quantity of an
+          basketItem already exists in the basket it will sum the already existing quantity in the basketItem + the quantity provided by the client,
+          if the basket does not exist it will just set the basketItem quantity based on the number provided from the client.
+        */
         basketItem.setQuantity((basketItem.getQuantity() == null) ? quantity : quantity + basketItem.getQuantity());
+
         if (basketItem.getQuantity() > basketItem.getProduct().getStock()) {
             log.error("Insufficient stock for product with id: " +
                     "{}. Requested quantity: {}, available stock: {}", uuid, basketItem.getQuantity(), product.getStock());
@@ -130,6 +136,7 @@ public class BasketService {
             if (basketId != null) {
                 log.info("Processing webhook for basketId: {}", basketId);
                 var basket = basketRepository.findById(Long.valueOf(basketId));
+
                 //loops through the basketItems list to decrease the stock of the products that where in the basket
                 if (basket.isPresent()) {
                     basket.get().getBasketItems().forEach(item -> {
