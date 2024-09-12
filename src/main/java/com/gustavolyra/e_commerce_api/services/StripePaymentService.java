@@ -5,6 +5,7 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 @Service
+@Slf4j
 public class StripePaymentService implements Payment {
 
     @Value("${stripe.api.key}")
@@ -25,10 +27,10 @@ public class StripePaymentService implements Payment {
     @Transactional(readOnly = true)
     @Override
     public String createPaymentLink(User user) {
+        log.info("Creating payment link for {}", user.getUsername());
         try {
             Double price = user.getBasket().getBasketItems().stream()
                     .map(x -> x.getProduct().getPrice() * x.getQuantity()).reduce(0.0, Double::sum);
-
             Stripe.apiKey = apiKey;
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -41,6 +43,7 @@ public class StripePaymentService implements Payment {
                                             .setName("Cart payment").build()).build()).build()).build();
             return Session.create(params).getUrl();
         } catch (StripeException e) {
+            log.error("Error while creating payment link for {}", user.getUsername());
             return null;
         }
     }
