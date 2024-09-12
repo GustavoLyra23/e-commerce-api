@@ -9,6 +9,7 @@ import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class ProductService {
 
     private final S3Service s3Service;
@@ -39,7 +41,9 @@ public class ProductService {
     @Cacheable("products")
     @Transactional(readOnly = true)
     public Page<ProductDtoResponse> getAllProducts(Pageable pageable) {
+        log.info("Received request to get all products");
         var products = productRepository.findAll(pageable);
+        log.info("Returning {} products", products.getTotalElements());
         return products.map(ProductDtoResponse::new);
     }
 
@@ -47,24 +51,30 @@ public class ProductService {
     @Transactional
     public ProductDtoResponse createProduct(ProductDtoRequest dtoRequest) throws IOException {
         var user = userService.findUserFromAuthenticationContext();
+        log.info("User {} is creating a product", user.getUsername());
         Product product = new Product();
         product.setDescription(dtoRequest.description());
         product.setName(dtoRequest.name());
         product.setPrice(dtoRequest.price());
         product.setType(ProductType.valueOf(dtoRequest.type()));
         product.setUser(userRepository.getReferenceById(user.getId()));
-
         String url = s3Service.addFileToBucket(dtoRequest.file());
-
         product.setProductPictueUrl(url);
         product = productRepository.save(product);
+        log.info("Product {} created successfully with ID {}", product.getName(), product.getUuid());
         return new ProductDtoResponse(product);
+
     }
 
     @CacheEvict(value = "products", key = "#uuid")
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteProductById(UUID uuid) {
-        var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        log.info("Attempting request to delete product with ID {}: ", uuid);
+
+        var product = productRepository.findById(uuid).orElseThrow(() -> {
+            log.error("Product with ID {} not found:", uuid);
+            return new ResourceNotFoundException("Product not found");
+        });
         var user = userService.findUserFromAuthenticationContext();
 
         //goes to the user role list and return true if the user is an admin or false if he's not.
@@ -75,17 +85,24 @@ public class ProductService {
         if he's not an admin a forbidden exception will be thrown
          */
         if (!isUserAdmin && !product.getUser().getUsername().equalsIgnoreCase(user.getUsername())) {
+            log.error("User {} attempted to delete product ID {} without permission", user.getUsername(), product.getUuid());
             throw new ForbiddenException("Acess denied");
         }
         productRepository.deleteById(uuid);
+        log.info("Product with ID {} deleted successfully", uuid);
     }
 
     @CachePut(value = "products", key = "#uuid")
     @Transactional()
     public ProductDtoResponse updateProduct(UUID uuid, @Valid ProductDtoRequest dtoRequest) throws IOException {
-        var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        log.info("Attempting to update product with ID {}", uuid);
+        var product = productRepository.findById(uuid).orElseThrow(() -> {
+            log.error("Product with ID {} not found", uuid);
+            return new ResourceNotFoundException("Product not found");
+        });
         productUpdateMapper(product, dtoRequest);
         product = productRepository.save(product);
+        log.info("Product with ID {} successfully updated", uuid);
         return new ProductDtoResponse(product);
     }
 

@@ -3,6 +3,7 @@ package com.gustavolyra.e_commerce_api.services;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gustavolyra.e_commerce_api.config.S3Config;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class S3Service {
 
     @Value("${aws.s3.bucket}")
@@ -23,8 +25,8 @@ public class S3Service {
     }
 
     public String addFileToBucket(MultipartFile file) throws IOException {
+        log.info("Adding file to bucket");
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentDisposition("inline");
