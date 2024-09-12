@@ -8,6 +8,7 @@ import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,25 @@ public class ProductService {
             throw new ForbiddenException("Acess denied");
         }
         productRepository.deleteById(uuid);
+    }
+
+    @Transactional()
+    public ProductDtoResponse updateProduct(UUID uuid, @Valid ProductDtoRequest dtoRequest) throws IOException {
+        var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        productUpdateMapper(product, dtoRequest);
+        product = productRepository.save(product);
+        return new ProductDtoResponse(product);
+    }
+
+
+    private void productUpdateMapper(Product product, ProductDtoRequest dtoRequest) throws IOException {
+        product.setPrice(dtoRequest.price());
+        product.setType(ProductType.valueOf(dtoRequest.type()));
+        var pictureUrl = s3Service.addFileToBucket(dtoRequest.file());
+        product.setProductPictueUrl(pictureUrl);
+        product.setName(dtoRequest.name());
+        product.setDescription(dtoRequest.description());
+        product.setPrice(dtoRequest.price());
     }
 
 

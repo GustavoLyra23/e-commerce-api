@@ -36,11 +36,11 @@ public class User implements UserDetails {
     @Setter
     @Getter
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private Basket basket;
+    private transient Basket basket;
 
     @Getter
     @OneToMany(mappedBy = "user")
-    private Set<Product> products = new HashSet<>();
+    private transient Set<Product> products = new HashSet<>();
 
 
     public User(String email, String password) {

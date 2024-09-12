@@ -26,6 +26,7 @@ public class BasketItem {
 
     private Integer quantity;
 
+
     @ManyToOne
     @JoinColumn(name = "basket_id")
     private Basket basket;
