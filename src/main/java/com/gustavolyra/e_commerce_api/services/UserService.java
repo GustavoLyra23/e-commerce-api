@@ -34,7 +34,10 @@ public class UserService {
     @Transactional(readOnly = true)
     public String login(UserRequestDto userDto) {
         log.info("User {} trying to login", userDto.email());
-        var user = userRepository.findByEmail(userDto.email()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        var user = userRepository.findByEmail(userDto.email())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         if (passwordEncoder.matches(passwordEncoder.encode(userDto.password()), user.getPassword())) {
             log.error("User {} has invalid credentials", user.getUsername());
             throw new ForbiddenException("Invalid credentials");
