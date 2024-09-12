@@ -7,6 +7,7 @@ import com.gustavolyra.e_commerce_api.repositories.BasketRepository;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.InsufficientStockException;
 import com.gustavolyra.e_commerce_api.services.exceptions.PaymentCreationException;
+import com.gustavolyra.e_commerce_api.services.exceptions.PaymentWebHookException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
@@ -64,7 +65,8 @@ public class BasketService {
         }
 
         //verifies if the product(basketItem) already exist in the basket
-        var basketItem = basket.getBasketItems().stream().filter(x -> x.getProduct().getUuid().equals(uuid)).findFirst().orElse(new BasketItem());
+        var basketItem = basket.getBasketItems()
+                .stream().filter(x -> x.getProduct().getUuid().equals(uuid)).findFirst().orElse(new BasketItem());
 
         if (basketItem.getProduct() == null) {
             basketItem.setBasket(basket);
@@ -79,7 +81,7 @@ public class BasketService {
     public String checkout() {
         var user = userService.findUserFromAuthenticationContext();
         if (user.getBasket() == null) {
-            throw new ResourceNotFoundException("No basket found");
+            throw new ResourceNotFoundException("Invalid checkout");
         }
 
         var paymentLink = paymentService.createPaymentLink(user);
@@ -87,7 +89,6 @@ public class BasketService {
             return paymentLink;
         } else {
             throw new PaymentCreationException("Could not create payment");
-
         }
     }
 
@@ -96,9 +97,21 @@ public class BasketService {
         try {
             Event event = Webhook.constructEvent(payload, header, stripeSecret);
             var basketId = findBasketIdFromWebHook(event);
-            basketRepository.deleteById(Long.valueOf(basketId));
+
+            if (basketId != null) {
+                var basket = basketRepository.findById(Long.valueOf(basketId));
+                //loops through the basketItems list to decrease the stock of the products that where in the basket
+                if (basket.isPresent()) {
+                    basket.get().getBasketItems().forEach(item -> {
+                        var product = item.getProduct();
+                        product.setStock(product.getStock() - item.getQuantity());
+                        productRepository.save(product);
+                    });
+                    basketRepository.deleteById(Long.valueOf(basketId));
+                }
+            }
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PaymentWebHookException("Error during webhook");
         }
     }
 
