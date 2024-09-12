@@ -21,7 +21,6 @@ public class ProductDtoResponse implements Serializable {
     private String seller;
     private String pictureUrl;
     private Integer stock;
-    private Double price;
 
     public ProductDtoResponse(Product product) {
         id = product.getUuid();
@@ -31,7 +30,6 @@ public class ProductDtoResponse implements Serializable {
         seller = product.getUser().getUsername();
         pictureUrl = product.getProductPictueUrl();
         stock = product.getStock();
-        price = product.getPrice();
     }
 
 
