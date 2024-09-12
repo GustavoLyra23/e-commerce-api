@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tb_role")
-public class Role implements GrantedAuthority {
-
+public class Role implements GrantedAuthority, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

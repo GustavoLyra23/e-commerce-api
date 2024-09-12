@@ -7,6 +7,8 @@ import com.gustavolyra.e_commerce_api.repositories.RoleRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.DatabaseConflictException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,12 +52,14 @@ public class UserService {
         return new UserDtoResponse(user);
     }
 
-
+    @Transactional(readOnly = true)
     public User findUserFromAuthenticationContext() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var principal = auth.getPrincipal();
         return (User) principal;
     }
 
-
 }
+
+
+

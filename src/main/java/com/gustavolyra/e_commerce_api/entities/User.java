@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,8 +16,9 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_user")
-public class User implements UserDetails {
-
+public class User implements UserDetails, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,12 +38,12 @@ public class User implements UserDetails {
 
     @Setter
     @Getter
-    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private transient Basket basket;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    private Basket basket;
 
     @Getter
     @OneToMany(mappedBy = "user")
-    private transient Set<Product> products = new HashSet<>();
+    private Set<Product> products = new HashSet<>();
 
 
     public User(String email, String password) {

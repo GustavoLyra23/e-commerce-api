@@ -5,6 +5,7 @@ import com.gustavolyra.e_commerce_api.dto.error.StandardError;
 import com.gustavolyra.e_commerce_api.dto.error.ValidationError;
 import com.gustavolyra.e_commerce_api.services.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -45,7 +46,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<StandardError> handleAuthorizationDeniedException(AuthorizationDeniedException ex, HttpServletRequest request) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
-        StandardError error = new StandardError(Instant.now(), status.value(), "Acess denied", request.getRequestURI());
+        StandardError error = new StandardError(Instant.now(), status.value(), ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(error);
     }
 
@@ -77,5 +78,14 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<StandardError> handleMethodArgumentNotValidException(ConstraintViolationException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        ValidationError validationError = new ValidationError(Instant.now(), status.value(), "Validation error", request.getRequestURI());
+        ex.getConstraintViolations().forEach(error -> {
+            validationError.addFieldError(new FieldError(error.getPropertyPath().toString(), error.getMessage()));
+        });
+        return ResponseEntity.status(status).body(validationError);
+    }
 
 }
