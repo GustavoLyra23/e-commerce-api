@@ -38,7 +38,7 @@ public class ProductService {
         this.userRepository = userRepository;
     }
 
-    @Cacheable("products")
+    @Cacheable(value = "products")
     @Transactional(readOnly = true)
     public Page<ProductDtoResponse> getAllProducts(Pageable pageable) {
         log.info("Received request to get all products");
@@ -47,7 +47,7 @@ public class ProductService {
         return products.map(ProductDtoResponse::new);
     }
 
-    @CachePut(value = "products", key = "#result.id")
+    @CacheEvict(value = "products", allEntries = true)
     @Transactional
     public ProductDtoResponse createProduct(ProductDtoRequest dtoRequest) throws IOException {
         var user = userService.findUserFromAuthenticationContext();
@@ -56,6 +56,7 @@ public class ProductService {
         product.setDescription(dtoRequest.description());
         product.setName(dtoRequest.name());
         product.setPrice(dtoRequest.price());
+        product.setStock(dtoRequest.stock());
         product.setType(ProductType.valueOf(dtoRequest.type()));
         product.setUser(userRepository.getReferenceById(user.getId()));
         String url = s3Service.addFileToBucket(dtoRequest.file());
@@ -66,7 +67,7 @@ public class ProductService {
 
     }
 
-    @CacheEvict(value = "products", key = "#uuid")
+    @CacheEvict(value = "products", allEntries = true)
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteProductById(UUID uuid) {
         log.info("Attempting request to delete product with ID {}: ", uuid);
@@ -92,7 +93,7 @@ public class ProductService {
         log.info("Product with ID {} deleted successfully", uuid);
     }
 
-    @CachePut(value = "products", key = "#uuid")
+    @CacheEvict(value = "products", allEntries = true)
     @Transactional()
     public ProductDtoResponse updateProduct(UUID uuid, @Valid ProductDtoRequest dtoRequest) throws IOException {
         log.info("Attempting to update product with ID {}", uuid);
@@ -114,6 +115,7 @@ public class ProductService {
         product.setProductPictueUrl(pictureUrl);
         product.setName(dtoRequest.name());
         product.setDescription(dtoRequest.description());
+        product.setStock(dtoRequest.stock());
         product.setPrice(dtoRequest.price());
     }
 

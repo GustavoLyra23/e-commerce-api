@@ -12,6 +12,7 @@ public record ProductDtoRequest(@NotBlank(message = "name cant't be null") Strin
                                 @NotBlank(message = "description cant't be null") String description,
                                 @Positive(message = "price must be positive") Double price,
                                 @NotBlank(message = "type can't be blank") String type,
+                                @Positive(message = "stock must be positive") Integer stock,
                                 @NotNull(message = "file can't be null") MultipartFile file) implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

@@ -91,6 +91,12 @@ public class BasketService {
         }
 
         basketItem.setQuantity((basketItem.getQuantity() == null) ? quantity : quantity + basketItem.getQuantity());
+        if (basketItem.getQuantity() > basketItem.getProduct().getStock()) {
+            log.error("Insufficient stock for product with id: " +
+                    "{}. Requested quantity: {}, available stock: {}", uuid, basketItem.getQuantity(), product.getStock());
+            throw new InsufficientStockException("Invalid stock");
+        }
+
         basketItemRepository.save(basketItem);
         log.info("Product with id: {} added to basket with new quantity: {}", uuid, basketItem.getQuantity());
         return "Added product with sucess";

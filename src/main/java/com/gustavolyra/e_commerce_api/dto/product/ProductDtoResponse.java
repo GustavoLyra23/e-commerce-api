@@ -20,6 +20,7 @@ public class ProductDtoResponse implements Serializable {
     private ProductType productType;
     private String seller;
     private String pictureUrl;
+    private Integer stock;
 
     public ProductDtoResponse(Product product) {
         id = product.getUuid();
@@ -28,6 +29,7 @@ public class ProductDtoResponse implements Serializable {
         productType = product.getType();
         seller = product.getUser().getUsername();
         pictureUrl = product.getProductPictueUrl();
+        stock = product.getStock();
     }
 
 
