@@ -1,5 +1,6 @@
 package com.gustavolyra.e_commerce_api.services;
 
+import com.gustavolyra.e_commerce_api.dto.basket.BasketDto;
 import com.gustavolyra.e_commerce_api.entities.Basket;
 import com.gustavolyra.e_commerce_api.entities.BasketItem;
 import com.gustavolyra.e_commerce_api.repositories.BasketItemRepository;
@@ -12,7 +13,12 @@ import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundExcept
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class BasketService {
 
     @Value("${stripe.sign.secret}")
@@ -51,6 +58,7 @@ public class BasketService {
 
     @Transactional
     public String addProduct(UUID uuid, Integer quantity) {
+
         var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         if (product.getStock() < quantity) {
             throw new InsufficientStockException("Invalid stock quantity");
@@ -124,5 +132,13 @@ public class BasketService {
         return null;
     }
 
-
+    @Transactional()
+    public BasketDto findBasket() {
+        var user = userService.findUserFromAuthenticationContext();
+        var basket = user.getBasket();
+        if (basket == null) {
+            throw new ResourceNotFoundException("No basket found");
+        }
+        return new BasketDto(basket);
+    }
 }

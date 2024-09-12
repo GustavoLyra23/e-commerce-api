@@ -5,12 +5,15 @@ import com.gustavolyra.e_commerce_api.enums.ProductType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.UUID;
 
 @NoArgsConstructor
 @Getter
-public class ProductDtoResponse {
-
+public class ProductDtoResponse implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private UUID id;
     private String name;
     private String description;

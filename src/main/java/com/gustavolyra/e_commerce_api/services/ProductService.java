@@ -9,6 +9,9 @@ import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,12 +36,14 @@ public class ProductService {
         this.userRepository = userRepository;
     }
 
+    @Cacheable("products")
     @Transactional(readOnly = true)
     public Page<ProductDtoResponse> getAllProducts(Pageable pageable) {
         var products = productRepository.findAll(pageable);
         return products.map(ProductDtoResponse::new);
     }
 
+    @CachePut(value = "products", key = "#result.id")
     @Transactional
     public ProductDtoResponse createProduct(ProductDtoRequest dtoRequest) throws IOException {
         var user = userService.findUserFromAuthenticationContext();
@@ -56,6 +61,7 @@ public class ProductService {
         return new ProductDtoResponse(product);
     }
 
+    @CacheEvict(value = "products", key = "#uuid")
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteProductById(UUID uuid) {
         var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
@@ -74,6 +80,7 @@ public class ProductService {
         productRepository.deleteById(uuid);
     }
 
+    @CachePut(value = "products", key = "#uuid")
     @Transactional()
     public ProductDtoResponse updateProduct(UUID uuid, @Valid ProductDtoRequest dtoRequest) throws IOException {
         var product = productRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
