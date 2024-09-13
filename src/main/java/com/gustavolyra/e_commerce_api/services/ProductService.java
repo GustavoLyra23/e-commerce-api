@@ -10,8 +10,8 @@ import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +57,12 @@ public class ProductService {
         product.setName(dtoRequest.name());
         product.setPrice(dtoRequest.price());
         product.setStock(dtoRequest.stock());
-        product.setType(ProductType.valueOf(dtoRequest.type()));
+        try {
+            product.setType(ProductType.valueOf(dtoRequest.type()));
+        } catch (IllegalArgumentException e) {
+            log.error("Could not find ENUM type for {}", dtoRequest.type());
+            throw new BadRequestException("Type not found");
+        }
         product.setUser(userRepository.getReferenceById(user.getId()));
         String url = s3Service.addFileToBucket(dtoRequest.file());
         product.setProductPictueUrl(url);

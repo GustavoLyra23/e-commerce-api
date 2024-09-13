@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: e_commerce_api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      ACESS_KEY_ID: "${ACESS_KEY_ID}"
+      SECRET_KEY: "${SECRET_KEY}"
+      AWS_BUCKET_NAME: "${AWS_BUCKET_NAME}"
+      STRIPE_API_KEY: "${STRIPE_API_KEY}"
+      STRIPE_SECRET: "${STRIPE_SECRET}"
+
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
