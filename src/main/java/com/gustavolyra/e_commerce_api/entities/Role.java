@@ -1,13 +1,17 @@
 package com.gustavolyra.e_commerce_api.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "tb_role")
 public class Role implements GrantedAuthority, Serializable {

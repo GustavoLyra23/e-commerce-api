@@ -8,7 +8,6 @@ import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,7 +15,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -38,7 +36,7 @@ public class ProductService {
         this.userRepository = userRepository;
     }
 
-    @Cacheable(value = "products")
+    @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     @Transactional(readOnly = true)
     public Page<ProductDtoResponse> getAllProducts(Pageable pageable) {
         log.info("Received request to get all products");
@@ -73,10 +71,9 @@ public class ProductService {
     }
 
     @CacheEvict(value = "products", allEntries = true)
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional()
     public void deleteProductById(UUID uuid) {
         log.info("Attempting request to delete product with ID {}: ", uuid);
-
         var product = productRepository.findById(uuid).orElseThrow(() -> {
             log.error("Product with ID {} not found:", uuid);
             return new ResourceNotFoundException("Product not found");
@@ -84,8 +81,7 @@ public class ProductService {
         var user = userService.findUserFromAuthenticationContext();
 
         //goes to the user role list and return true if the user is an admin or false if he's not.
-        boolean isUserAdmin = user.getAuthorities().stream()
-                .anyMatch(x -> x.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
+        boolean isUserAdmin = user.getAuthorities().stream().anyMatch(x -> x.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
 
         /*verifies if the user is non admin and if he's trying to delete other users product,
         if he's not an admin a forbidden exception will be thrown
@@ -100,7 +96,7 @@ public class ProductService {
 
     @CacheEvict(value = "products", allEntries = true)
     @Transactional()
-    public ProductDtoResponse updateProduct(UUID uuid, @Valid ProductDtoRequest dtoRequest) throws IOException {
+    public ProductDtoResponse updateProduct(UUID uuid, ProductDtoRequest dtoRequest) throws IOException {
         log.info("Attempting to update product with ID {}", uuid);
         var product = productRepository.findById(uuid).orElseThrow(() -> {
             log.error("Product with ID {} not found", uuid);

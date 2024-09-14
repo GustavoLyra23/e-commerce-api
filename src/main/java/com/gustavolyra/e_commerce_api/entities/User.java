@@ -44,6 +44,12 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user")
     private Set<Product> products = new HashSet<>();
 
+    public User(Long id, String email, String password) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+    }
+
 
     public User(String email, String password) {
         this.email = email;

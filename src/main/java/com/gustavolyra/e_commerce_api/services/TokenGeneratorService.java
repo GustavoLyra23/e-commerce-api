@@ -22,7 +22,6 @@ public class TokenGeneratorService {
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
 
-
     public String generateToken(User user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());

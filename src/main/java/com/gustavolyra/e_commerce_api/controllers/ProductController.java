@@ -46,7 +46,8 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
-    public ResponseEntity<ProductDtoResponse> updateProduct(@PathVariable("id") UUID uuid, @Valid @ModelAttribute ProductDtoRequest dtoRequest) throws IOException {
+    public ResponseEntity<ProductDtoResponse> updateProduct(@PathVariable("id") UUID uuid,
+                                                            @Valid @ModelAttribute ProductDtoRequest dtoRequest) throws IOException {
         var product = productService.updateProduct(uuid, dtoRequest);
         return ResponseEntity.ok(product);
     }

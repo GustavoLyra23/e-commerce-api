@@ -6,15 +6,13 @@ import com.gustavolyra.e_commerce_api.entities.BasketItem;
 import com.gustavolyra.e_commerce_api.repositories.BasketItemRepository;
 import com.gustavolyra.e_commerce_api.repositories.BasketRepository;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
-import com.gustavolyra.e_commerce_api.services.exceptions.InsufficientStockException;
-import com.gustavolyra.e_commerce_api.services.exceptions.PaymentCreationException;
-import com.gustavolyra.e_commerce_api.services.exceptions.PaymentWebHookException;
-import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import com.gustavolyra.e_commerce_api.services.exceptions.*;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,22 +41,25 @@ public class BasketService {
         this.basketItemRepository = basketItemRepository;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteBasketById(Long id) {
         log.info("Received request to delete basket with id: {}", id);
-        boolean exists = basketItemRepository.existsById(id);
-        if (!exists) {
-            log.error("Basket with id: {} not found", id);
-            throw new ResourceNotFoundException("Basket not found");
+        try {
+            boolean exists = basketItemRepository.existsById(id);
+            if (!exists) {
+                log.error("Basket with id: {} not found", id);
+                throw new ResourceNotFoundException("Basket not found");
+            }
+            basketRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseConflictException("Could not delete basket");
         }
-        basketRepository.deleteById(id);
         log.info("Basket with id: {} deleted successfully", id);
     }
 
     @Transactional
     public String addProduct(UUID uuid, Integer quantity) {
         log.info("Received request to add product with id: {} and quantity: {}", uuid, quantity);
-
         var product = productRepository.findById(uuid).orElseThrow(() -> {
             log.error("Product with id: {} not found", uuid);
             return new ResourceNotFoundException("Product not found");
@@ -83,20 +84,17 @@ public class BasketService {
         //verifies if the product(basketItem) already exist in the basket
         var basketItem = basket.getBasketItems()
                 .stream().filter(x -> x.getProduct().getUuid().equals(uuid)).findFirst().orElse(new BasketItem());
-
         //if the item does not exist it will create a new one
         if (basketItem.getProduct() == null) {
             basketItem.setBasket(basket);
             basketItem.setProduct(product);
             log.info("Adding new product to basket: {}", uuid);
         }
-
         /* this sets the quantity of an basketItem based on the item quantity existence, if the quantity of an
           basketItem already exists in the basket it will sum the already existing quantity in the basketItem + the quantity provided by the client,
           if the basket does not exist it will just set the basketItem quantity based on the number provided from the client.
         */
         basketItem.setQuantity((basketItem.getQuantity() == null) ? quantity : quantity + basketItem.getQuantity());
-
         if (basketItem.getQuantity() > basketItem.getProduct().getStock()) {
             log.error("Insufficient stock for product with id: " +
                     "{}. Requested quantity: {}, available stock: {}", uuid, basketItem.getQuantity(), product.getStock());
@@ -126,7 +124,7 @@ public class BasketService {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void webhook(String payload, String header) {
         log.info("Received webhook event");
         try {
