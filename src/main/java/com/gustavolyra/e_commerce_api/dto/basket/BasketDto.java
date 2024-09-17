@@ -20,6 +20,10 @@ public final class BasketDto implements Serializable {
         basket.getBasketItems().forEach(basketItem -> {
             list.add(new BasketItemDto(basketItem));
         });
-
     }
+
+    public BasketDto(Long id) {
+        this.id = id;
+    }
+
 }

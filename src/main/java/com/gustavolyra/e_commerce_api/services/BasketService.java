@@ -66,8 +66,7 @@ public class BasketService {
         });
 
         if (product.getStock() < quantity) {
-            log.error("Insufficient stock for product with id: " +
-                    "{}. Requested quantity: {}, available stock: {}", uuid, quantity, product.getStock());
+            log.error("Insufficient stock for product with id: " + "{}. Requested quantity: {}, available stock: {}", uuid, quantity, product.getStock());
             throw new InsufficientStockException("Invalid stock quantity");
         }
 
@@ -82,22 +81,22 @@ public class BasketService {
         }
 
         //verifies if the product(basketItem) already exist in the basket
-        var basketItem = basket.getBasketItems()
-                .stream().filter(x -> x.getProduct().getUuid().equals(uuid)).findFirst().orElse(new BasketItem());
+        var basketItem = basket.getBasketItems().stream()
+                .filter(x -> x.getProduct().getUuid().equals(uuid))
+                .findFirst()
+                .orElse(new BasketItem());
+
         //if the item does not exist it will create a new one
         if (basketItem.getProduct() == null) {
             basketItem.setBasket(basket);
             basketItem.setProduct(product);
             log.info("Adding new product to basket: {}", uuid);
         }
-        /* this sets the quantity of an basketItem based on the item quantity existence, if the quantity of an
-          basketItem already exists in the basket it will sum the already existing quantity in the basketItem + the quantity provided by the client,
-          if the basket does not exist it will just set the basketItem quantity based on the number provided from the client.
-        */
-        basketItem.setQuantity((basketItem.getQuantity() == null) ? quantity : quantity + basketItem.getQuantity());
+
+        addQuantityToBasket(basketItem, quantity);
+
         if (basketItem.getQuantity() > basketItem.getProduct().getStock()) {
-            log.error("Insufficient stock for product with id: " +
-                    "{}. Requested quantity: {}, available stock: {}", uuid, basketItem.getQuantity(), product.getStock());
+            log.error("Insufficient stock for product with id: " + "{}. Requested quantity: {}, available stock: {}", uuid, basketItem.getQuantity(), product.getStock());
             throw new InsufficientStockException("Invalid stock");
         }
 
@@ -168,10 +167,17 @@ public class BasketService {
         var user = userService.findUserFromAuthenticationContext();
         var basket = user.getBasket();
         if (basket == null) {
-            log.error("No basket found for user");
-            throw new ResourceNotFoundException("No basket found");
+            Basket newBasket = new Basket(null, user, null);
+            newBasket = basketRepository.save(newBasket);
+            return new BasketDto(newBasket.getId());
         }
         log.info("Basket found for user with id: {}", user.getId());
         return new BasketDto(basket);
     }
+
+    private void addQuantityToBasket(BasketItem basketItem, Integer quantity) {
+        basketItem.setQuantity((basketItem.getQuantity() == null) ? quantity : quantity + basketItem.getQuantity());
+    }
+
+
 }

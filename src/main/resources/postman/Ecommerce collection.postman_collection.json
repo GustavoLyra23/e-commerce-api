@@ -1,0 +1,362 @@
+{
+	"info": {
+		"_postman_id": "8716928f-61cd-42dc-9beb-4fa8fa5f8331",
+		"name": "Ecommerce collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36474637"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"gustavolyra23@gmail.com\",\r\n    \"password\": \"amoMacarrao\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/auth/create",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"gustavo@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/auth/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Find All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1/products",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI1NDIxMzE2LCJleHAiOjE4MTE4MjEzMTZ9.xPhBUgvYi4yhtSg3g528FA89sEnY6nrZbDbZS4hc4EMZzA2LUpBEhWcQw9hLHrXITie2X0GY1wj4gfBBeC1xKA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/gustavo/Downloads/b9f6556d41672ce8d07752900a656cfd.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/v1/products?name=teste&description=oi&price=10.0&type=ELETRONICS",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"products"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "teste"
+								},
+								{
+									"key": "description",
+									"value": "oi"
+								},
+								{
+									"key": "price",
+									"value": "10.0"
+								},
+								{
+									"key": "type",
+									"value": "ELETRONICS"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI1NDIxMzE2LCJleHAiOjE4MTE4MjEzMTZ9.xPhBUgvYi4yhtSg3g528FA89sEnY6nrZbDbZS4hc4EMZzA2LUpBEhWcQw9hLHrXITie2X0GY1wj4gfBBeC1xKA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/gustavo/Downloads/b9f6556d41672ce8d07752900a656cfd.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/v1/products?name=teste&description=oi&price=10.0&type=ELETRONICS",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"products"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "teste"
+								},
+								{
+									"key": "description",
+									"value": "oi"
+								},
+								{
+									"key": "price",
+									"value": "10.0"
+								},
+								{
+									"key": "type",
+									"value": "ELETRONICS"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete product by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2MTI4MTYzLCJleHAiOjE4MTI1MjgxNjN9.Ik8EcXKsLCnoMnDa5pSca-aW6EmZE0oXcM4qT8AxVHPsK4zeiMLID9nWI1DfTfH4Ixqa4Xhja_QyTUJP1L6pBQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1/products/97e630e3-637a-4930-b4e9-8fcf48fda319",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"products",
+								"97e630e3-637a-4930-b4e9-8fcf48fda319"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Basket",
+			"item": [
+				{
+					"name": "Add Product To Basket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI1Njg0NjMzLCJleHAiOjE4MTIwODQ2MzN9.1UZ2tQTT_RF_I3PY1IENxFoOmfafccMBsSAeSFabZV_ckVEaIDbj8WOSuU_bU7tJfQ8ZJRxVLnQat_sVz6YExw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1/cart/97e630e3-637a-4930-b4e9-8fcf48fda319?quantity=1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"cart",
+								"97e630e3-637a-4930-b4e9-8fcf48fda319"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checkout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2MTI1MjUyLCJleHAiOjE4MTI1MjUyNTJ9.aMFdpY5yydjpeX0btNBQoLDKcnD9f5EO2tZsbWcqLqrfhAvdwPOtaMHpf7KeaGDGjhy7bvUIVYDyAtTfKyY5ow",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1/basket/checkout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"basket",
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete basket by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2MDQ0MDQ1LCJleHAiOjE4MTI0NDQwNDV9.rKdVngMTZuTTA-NTrzlau1FgPkDa-WJyYWvE5-Trqnl4qo2XUH17tjgnceM_bcgCbNyr0_xrK48Wde5Igs7qUQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1/basket/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"basket",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get basket info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2MTMzNzk2LCJleHAiOjE4MTI1MzM3OTZ9.Zt_HkxHAEt9UZIRldaNKrgb8SB7m9jgDv2n13cHqeuTH6N9biSOLAui-mEnf7r0kGnMKYFNeZR6EJXJX-CVuig",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1/basket/info",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"basket",
+								"info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

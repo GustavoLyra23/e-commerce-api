@@ -81,7 +81,8 @@ public class ProductService {
         var user = userService.findUserFromAuthenticationContext();
 
         //goes to the user role list and return true if the user is an admin or false if he's not.
-        boolean isUserAdmin = user.getAuthorities().stream().anyMatch(x -> x.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
+        boolean isUserAdmin = user.getAuthorities().stream()
+                .anyMatch(x -> x.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
 
         /*verifies if the user is non admin and if he's trying to delete other users product,
         if he's not an admin a forbidden exception will be thrown
