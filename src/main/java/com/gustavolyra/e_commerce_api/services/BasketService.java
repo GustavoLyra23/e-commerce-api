@@ -111,6 +111,9 @@ public class BasketService {
         if (user.getBasket() == null) {
             log.error("No basket found for user during checkout");
             throw new ResourceNotFoundException("Invalid checkout");
+        } else if (user.getBasket().getBasketItems().isEmpty()) {
+            log.error("Empty basket found for user during checkout");
+            throw new ResourceNotFoundException("Empty basket");
         }
 
         var paymentLink = paymentService.createPaymentLink(user);

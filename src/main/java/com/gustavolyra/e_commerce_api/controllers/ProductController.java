@@ -3,7 +3,9 @@ package com.gustavolyra.e_commerce_api.controllers;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoRequest;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoResponse;
 import com.gustavolyra.e_commerce_api.services.ProductService;
+import com.gustavolyra.e_commerce_api.services.exceptions.DatabaseConflictException;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +42,12 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") UUID uuid) {
-        productService.deleteProductById(uuid);
-        return ResponseEntity.noContent().build();
+        try {
+            productService.deleteProductById(uuid);
+            return ResponseEntity.noContent().build();
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseConflictException("Product is associated with a basket");
+        }
     }
 
     @PutMapping("/{id}")
