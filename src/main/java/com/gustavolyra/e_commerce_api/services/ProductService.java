@@ -5,6 +5,7 @@ import com.gustavolyra.e_commerce_api.dto.product.ProductDtoResponse;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoWithComments;
 import com.gustavolyra.e_commerce_api.entities.Product;
 import com.gustavolyra.e_commerce_api.enums.ProductType;
+import com.gustavolyra.e_commerce_api.repositories.CommentRepository;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
 import com.gustavolyra.e_commerce_api.repositories.UserRepository;
 import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
@@ -29,12 +30,14 @@ public class ProductService {
     private final UserService userService;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
-    public ProductService(S3Service s3Service, UserService userService, ProductRepository productRepository, UserRepository userRepository) {
+    public ProductService(S3Service s3Service, UserService userService, ProductRepository productRepository, UserRepository userRepository, CommentRepository commentRepository) {
         this.s3Service = s3Service;
         this.userService = userService;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize")

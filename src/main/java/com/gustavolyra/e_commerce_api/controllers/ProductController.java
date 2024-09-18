@@ -65,5 +65,4 @@ public class ProductController {
         var product = productService.updateProduct(uuid, dtoRequest);
         return ResponseEntity.ok(product);
     }
-
 }

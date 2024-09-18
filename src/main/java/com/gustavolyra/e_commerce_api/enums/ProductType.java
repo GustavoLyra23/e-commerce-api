@@ -6,7 +6,4 @@ public enum ProductType {
     CLOTH,
     HEALTH
 
-
-
-
 }
