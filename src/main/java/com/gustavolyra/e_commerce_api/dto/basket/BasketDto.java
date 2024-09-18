@@ -17,9 +17,8 @@ public final class BasketDto implements Serializable {
 
     public BasketDto(Basket basket) {
         id = basket.getId();
-        basket.getBasketItems().forEach(basketItem -> {
-            list.add(new BasketItemDto(basketItem));
-        });
+        //loops through the basket items and adds them to the list
+        basket.getBasketItems().forEach(basketItem -> list.add(new BasketItemDto(basketItem)));
     }
 
     public BasketDto(Long id) {

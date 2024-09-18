@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -35,6 +37,9 @@ public class Product implements Serializable {
     private ProductType type;
 
     private Integer stock;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    private List<Comment> comments = new ArrayList<>();
 
     private String productPictueUrl;
 

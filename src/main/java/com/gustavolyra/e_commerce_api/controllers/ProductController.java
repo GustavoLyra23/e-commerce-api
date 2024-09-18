@@ -2,6 +2,7 @@ package com.gustavolyra.e_commerce_api.controllers;
 
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoRequest;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoResponse;
+import com.gustavolyra.e_commerce_api.dto.product.ProductDtoWithComments;
 import com.gustavolyra.e_commerce_api.services.ProductService;
 import com.gustavolyra.e_commerce_api.services.exceptions.DatabaseConflictException;
 import jakarta.validation.Valid;
@@ -26,11 +27,18 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<Page<ProductDtoResponse>> getAllProducts(Pageable pageable) {
         var products = productService.getAllProducts(pageable);
         return ResponseEntity.ok(products);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDtoWithComments> getProductById(@PathVariable("id") UUID uuid) {
+        var product = productService.getProductById(uuid);
+        return ResponseEntity.ok(product);
+    }
+
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','CLIENT')")

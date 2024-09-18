@@ -2,6 +2,7 @@ package com.gustavolyra.e_commerce_api.services;
 
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoRequest;
 import com.gustavolyra.e_commerce_api.dto.product.ProductDtoResponse;
+import com.gustavolyra.e_commerce_api.dto.product.ProductDtoWithComments;
 import com.gustavolyra.e_commerce_api.entities.Product;
 import com.gustavolyra.e_commerce_api.enums.ProductType;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
@@ -100,9 +101,21 @@ public class ProductService {
     public ProductDtoResponse updateProduct(UUID uuid, ProductDtoRequest dtoRequest) throws IOException {
         log.info("Attempting to update product with ID {}", uuid);
         var product = productRepository.findById(uuid).orElseThrow(() -> {
-            log.error("Product with ID {} not found", uuid);
+            logErrorResourceNotFound(uuid);
             return new ResourceNotFoundException("Product not found");
         });
+
+        var user = userService.findUserFromAuthenticationContext();
+        boolean isUserAdmin = user.getAuthorities().stream()
+                .anyMatch(x -> x.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
+
+        if (product.getUser().getUsername().equals(user.getUsername()) && !isUserAdmin) {
+            log.error("User {} attempted to update product ID {} without permission", user.getUsername(), product.getUuid());
+            throw new ForbiddenException("Access denied, cannot update other user's product");
+
+        }
+
+
         productUpdateMapper(product, dtoRequest);
         product = productRepository.save(product);
         log.info("Product with ID {} successfully updated", uuid);
@@ -119,6 +132,22 @@ public class ProductService {
         product.setDescription(dtoRequest.description());
         product.setStock(dtoRequest.stock());
         product.setPrice(dtoRequest.price());
+    }
+
+    @Cacheable(value = "products", key = "#uuid")
+    @Transactional(readOnly = true)
+    public ProductDtoWithComments getProductById(UUID uuid) {
+        log.info("Attempting to get product with ID {}", uuid);
+        var product = productRepository.findByUuid(uuid).orElseThrow(() -> {
+            logErrorResourceNotFound(uuid);
+            return new ResourceNotFoundException("Product not found");
+        });
+        log.info("Product with ID {} found", uuid);
+        return new ProductDtoWithComments(product);
+    }
+
+    private void logErrorResourceNotFound(UUID uuid) {
+        log.error("Product with ID {} not found", uuid);
     }
 
 

@@ -23,9 +23,8 @@ public class ControllerExceptionHandler {
     public ResponseEntity<StandardError> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
         ValidationError validationError = new ValidationError(Instant.now(), status.value(), "Validation error", request.getRequestURI());
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
-            validationError.addFieldError(new FieldError(error.getField(), error.getDefaultMessage()));
-        });
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+            validationError.addFieldError(new FieldError(error.getField(), error.getDefaultMessage())));
         return ResponseEntity.status(status).body(validationError);
     }
 
@@ -82,9 +81,8 @@ public class ControllerExceptionHandler {
     public ResponseEntity<StandardError> handleMethodArgumentNotValidException(ConstraintViolationException ex, HttpServletRequest request) {
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
         ValidationError validationError = new ValidationError(Instant.now(), status.value(), "Validation error", request.getRequestURI());
-        ex.getConstraintViolations().forEach(error -> {
-            validationError.addFieldError(new FieldError(error.getPropertyPath().toString(), error.getMessage()));
-        });
+        ex.getConstraintViolations().forEach(error ->
+                validationError.addFieldError(new FieldError(error.getPropertyPath().toString(), error.getMessage())));
         return ResponseEntity.status(status).body(validationError);
     }
 

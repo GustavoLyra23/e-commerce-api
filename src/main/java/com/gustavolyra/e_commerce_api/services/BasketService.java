@@ -45,13 +45,21 @@ public class BasketService {
     public void deleteBasketById(Long id) {
         log.info("Received request to delete basket with id: {}", id);
         try {
-            boolean exists = basketItemRepository.existsById(id);
-            if (!exists) {
+            var basket = basketRepository.findById(id).orElseThrow(() -> {
                 log.error("Basket with id: {} not found", id);
-                throw new ResourceNotFoundException("Basket not found");
+                return new ResourceNotFoundException("Basket not found");
+            });
+
+            //verifies if the user is an admin and if the basket belongs to the user
+            var user = userService.findUserFromAuthenticationContext();
+            boolean isAdmin = user.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals("ROLE_ADMIN"));
+            if (!basket.getUser().getUsername().equals(user.getUsername()) && !isAdmin) {
+                throw new ForbiddenException("You can't delete other user's basket");
             }
+
             basketRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
+            log.error("Could not delete basket with id: {}", id);
             throw new DatabaseConflictException("Could not delete basket");
         }
         log.info("Basket with id: {} deleted successfully", id);
@@ -81,10 +89,7 @@ public class BasketService {
         }
 
         //verifies if the product(basketItem) already exist in the basket
-        var basketItem = basket.getBasketItems().stream()
-                .filter(x -> x.getProduct().getUuid().equals(uuid))
-                .findFirst()
-                .orElse(new BasketItem());
+        var basketItem = basket.getBasketItems().stream().filter(x -> x.getProduct().getUuid().equals(uuid)).findFirst().orElse(new BasketItem());
 
         //if the item does not exist it will create a new one
         if (basketItem.getProduct() == null) {
