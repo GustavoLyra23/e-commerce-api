@@ -9,6 +9,7 @@ For payment processing, the API integrates with Stripe, providing seamless payme
 This API serves as a practical example for building a modern e-commerce platform, leveraging best practices and technologies to deliver a high-quality solution.
 
 ## Technologies Used
+- Spring Security oAuth2
 - H2 In Memory Database
 - Java
 - Spring Boot
