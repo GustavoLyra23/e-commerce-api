@@ -76,13 +76,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/v1/products",
+							"raw": "{{host}}/v1/products/all",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"v1",
-								"products"
+								"products",
+								"all"
 							]
 						}
 					},
@@ -152,7 +153,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI1NDIxMzE2LCJleHAiOjE4MTE4MjEzMTZ9.xPhBUgvYi4yhtSg3g528FA89sEnY6nrZbDbZS4hc4EMZzA2LUpBEhWcQw9hLHrXITie2X0GY1wj4gfBBeC1xKA",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2NzQxNTQ1LCJleHAiOjE4MTMxNDE1NDV9.-HTv91LOLUMaD5s80G-pEsZ4uwDOqFClOc1np-fN1-NGwyKiXoKDS_hgyBoDl1UKePJO_P8t8OcvOfSCVhvdsA",
 									"type": "string"
 								}
 							]
@@ -165,18 +166,19 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Users/gustavo/Downloads/b9f6556d41672ce8d07752900a656cfd.jpg"
+									"src": "postman-cloud:///1ef6277a-4f2a-4390-8da8-8764db7208c0"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{host}}/v1/products?name=teste&description=oi&price=10.0&type=ELETRONICS",
+							"raw": "{{host}}/v1/products/97e630e3-637a-4930-b4e9-8fcf48fda319?name=teste&description=oi&price=10.0&type=ELETRONICS&stock=100",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"v1",
-								"products"
+								"products",
+								"97e630e3-637a-4930-b4e9-8fcf48fda319"
 							],
 							"query": [
 								{
@@ -194,6 +196,10 @@
 								{
 									"key": "type",
 									"value": "ELETRONICS"
+								},
+								{
+									"key": "stock",
+									"value": "100"
 								}
 							]
 						}
@@ -208,12 +214,31 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2MTI4MTYzLCJleHAiOjE4MTI1MjgxNjN9.Ik8EcXKsLCnoMnDa5pSca-aW6EmZE0oXcM4qT8AxVHPsK4zeiMLID9nWI1DfTfH4Ixqa4Xhja_QyTUJP1L6pBQ",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2NzQzMTM2LCJleHAiOjE4MTMxNDMxMzZ9.1I1G8cRDuDZyUxbYRg26tZyGYRqOYjou6C5DEx0UZPXj0GOA3hOSmsTZWiMNUwuskVQAjqq2bLRSrDjOO6yh6A",
 									"type": "string"
 								}
 							]
 						},
 						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1/products/97e630e3-637a-4930-b4e9-8fcf48fda319",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"products",
+								"97e630e3-637a-4930-b4e9-8fcf48fda319"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find By Id",
+					"request": {
+						"method": "GET",
 						"header": [],
 						"url": {
 							"raw": "{{host}}/v1/products/97e630e3-637a-4930-b4e9-8fcf48fda319",
@@ -277,7 +302,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2MTI1MjUyLCJleHAiOjE4MTI1MjUyNTJ9.aMFdpY5yydjpeX0btNBQoLDKcnD9f5EO2tZsbWcqLqrfhAvdwPOtaMHpf7KeaGDGjhy7bvUIVYDyAtTfKyY5ow",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2NjMxOTg4LCJleHAiOjE4MTMwMzE5ODh9.gTpJMlDTQyZjQmi4QPAWI01kS-2OppqpvDZXRXAfVtlu_RebxvDdAi72RAHZ2r8ZY8FlqJU3GzBOSq3YdeAz5w",
 									"type": "string"
 								}
 							]
@@ -306,7 +331,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2MDQ0MDQ1LCJleHAiOjE4MTI0NDQwNDV9.rKdVngMTZuTTA-NTrzlau1FgPkDa-WJyYWvE5-Trqnl4qo2XUH17tjgnceM_bcgCbNyr0_xrK48Wde5Igs7qUQ",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2NjY3NjAzLCJleHAiOjE4MTMwNjc2MDN9.txGvQ86uwqbyTxgTbOpe-gLRD0ygaZlFdcdcDzBlP1pjuqSiK1MZpL4QA83_vHZzHW8eBYz7vbG8cVWfIUQBHA",
 									"type": "string"
 								}
 							]
@@ -335,7 +360,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2MTMzNzk2LCJleHAiOjE4MTI1MzM3OTZ9.Zt_HkxHAEt9UZIRldaNKrgb8SB7m9jgDv2n13cHqeuTH6N9biSOLAui-mEnf7r0kGnMKYFNeZR6EJXJX-CVuig",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2NzQxNTQ1LCJleHAiOjE4MTMxNDE1NDV9.-HTv91LOLUMaD5s80G-pEsZ4uwDOqFClOc1np-fN1-NGwyKiXoKDS_hgyBoDl1UKePJO_P8t8OcvOfSCVhvdsA",
 									"type": "string"
 								}
 							]
@@ -351,6 +376,117 @@
 								"v1",
 								"basket",
 								"info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "Create new Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2NzM1MTUwLCJleHAiOjE4MTMxMzUxNTB9.8idlB03KD7x1VVN_PKbS0NT886ucIJA9wAktVH-LOEF8mnuxFnzifdXkSHr93bDCJEE-OdCSS-v__EKDZgmhPw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"Love this product!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/comments/97e630e3-637a-4930-b4e9-8fcf48fda319",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"comments",
+								"97e630e3-637a-4930-b4e9-8fcf48fda319"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reply Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2NzQzMTM2LCJleHAiOjE4MTMxNDMxMzZ9.1I1G8cRDuDZyUxbYRg26tZyGYRqOYjou6C5DEx0UZPXj0GOA3hOSmsTZWiMNUwuskVQAjqq2bLRSrDjOO6yh6A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"nao gostei do seu comentario\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/comments/4/reply",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"comments",
+								"4",
+								"reply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJndXN0YXZvQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzI2NzQzMTM2LCJleHAiOjE4MTMxNDMxMzZ9.1I1G8cRDuDZyUxbYRg26tZyGYRqOYjou6C5DEx0UZPXj0GOA3hOSmsTZWiMNUwuskVQAjqq2bLRSrDjOO6yh6A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1/comments/3",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"comments",
+								"3"
 							]
 						}
 					},

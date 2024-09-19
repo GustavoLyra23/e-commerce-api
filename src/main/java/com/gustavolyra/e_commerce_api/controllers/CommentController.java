@@ -33,4 +33,12 @@ public class CommentController {
         var comment = commentService.replyComment(commentId, commentDto);
         return ResponseEntity.ok(comment);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CLIENT','ADMIN')")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long commentId) {
+        commentService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

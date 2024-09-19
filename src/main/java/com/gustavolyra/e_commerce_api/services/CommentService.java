@@ -5,11 +5,13 @@ import com.gustavolyra.e_commerce_api.dto.comments.CommentDtoRequest;
 import com.gustavolyra.e_commerce_api.entities.Comment;
 import com.gustavolyra.e_commerce_api.repositories.CommentRepository;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
+import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -66,4 +68,20 @@ public class CommentService {
         comment.setMoment(Instant.now());
         return comment;
     }
+
+    @CacheEvict(value = "products", allEntries = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void deleteComment(Long commentId) {
+        var comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+
+        //verify if the user is the author of the comment
+        var user = userService.findUserFromAuthenticationContext();
+        if (!comment.getAuthor().getUsername().equals(user.getUsername())) {
+            log.error("User {} is not the author of the comment", user.getUsername());
+            throw new ForbiddenException("You can only delete your own comments");
+        }
+        commentRepository.delete(comment);
+    }
+
 }

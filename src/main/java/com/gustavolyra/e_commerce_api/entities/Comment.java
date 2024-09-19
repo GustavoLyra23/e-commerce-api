@@ -28,7 +28,7 @@ public class Comment implements Serializable {
     private Long id;
     private String text;
     private Instant moment;
-
+    
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User author;
@@ -41,7 +41,7 @@ public class Comment implements Serializable {
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
 
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Comment> replies = new ArrayList<>();
 
     @Override
