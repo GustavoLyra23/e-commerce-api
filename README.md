@@ -1,6 +1,6 @@
 # E-Commerce API
 
-This is an example of an E-Commerce API built with Java, Spring Boot, and Maven. It provides a comprehensive set of functionalities for user authentication, product management, file(product image) storage using AWS S3, payment processing using Stripe, logging with SLF4J, and caching with Redis. The API is designed to be a robust and scalable solution for e-commerce platforms, inspired by leading e-commerce giants like Amazon and Mercado Libre.
+This is an simple example of an E-Commerce API built with Java, Spring Boot, and Maven. It provides a comprehensive set of functionalities for user authentication, product management, file(product image) storage using AWS S3, payment processing using Stripe, logging with SLF4J, and caching with Redis. The API is designed to be a robust and scalable solution for e-commerce platforms, inspired by leading e-commerce giants like Amazon and Mercado Libre.
 
 The API supports secure user authentication and authorization, allowing users to register, log in, and manage their profiles. It also includes features for managing products, such as adding,post comments, reply comments, product updating, and deleting products, as well as listing all available products. File storage is handled through AWS S3, enabling efficient and secure storage of user profile pictures and product images.
 
