@@ -43,7 +43,7 @@ public class ProductService {
     @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize + #name")
     @Transactional(readOnly = true)
     public Page<ProductDtoResponse> getAllProducts(String name, Pageable pageable) {
-        if (name.isEmpty()) {
+        if (name == null) {
             log.info("Received request to get all products");
             return productRepository.findAll(pageable).map(ProductDtoResponse::new);
         } else {

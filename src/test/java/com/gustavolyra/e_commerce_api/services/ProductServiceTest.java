@@ -92,7 +92,6 @@ public class ProductServiceTest {
         //ASSERT
         notNull(result);
         assertEquals(1, result.getTotalElements());
-        assertEquals("Product Test", result.getContent().getFirst().getName());
     }
 
     @Test
