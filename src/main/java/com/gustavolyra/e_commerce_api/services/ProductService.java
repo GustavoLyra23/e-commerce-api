@@ -40,13 +40,16 @@ public class ProductService {
         this.commentRepository = commentRepository;
     }
 
-    @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
+    @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize + #name")
     @Transactional(readOnly = true)
-    public Page<ProductDtoResponse> getAllProducts(Pageable pageable) {
-        log.info("Received request to get all products");
-        var products = productRepository.findAll(pageable);
-        log.info("Returning {} products", products.getTotalElements());
-        return products.map(ProductDtoResponse::new);
+    public Page<ProductDtoResponse> getAllProducts(String name, Pageable pageable) {
+        if (name.isEmpty()) {
+            log.info("Received request to get all products");
+            return productRepository.findAll(pageable).map(ProductDtoResponse::new);
+        } else {
+            log.info("Received request to get all products sorted by name containing {}", name);
+            return productRepository.findByNameContainingIgnoreCase(name, pageable).map(ProductDtoResponse::new);
+        }
     }
 
     @CacheEvict(value = "products", allEntries = true)

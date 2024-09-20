@@ -88,7 +88,7 @@ public class ProductServiceTest {
     @Test
     void getAllProductsShouldReturnPageOfProducts() {
         //ACT
-        var result = productService.getAllProducts(pageRequest);
+        var result = productService.getAllProducts(null, pageRequest);
         //ASSERT
         notNull(result);
         assertEquals(1, result.getTotalElements());

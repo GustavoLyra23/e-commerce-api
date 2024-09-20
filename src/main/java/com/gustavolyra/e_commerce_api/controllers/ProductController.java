@@ -28,8 +28,9 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<ProductDtoResponse>> getAllProducts(Pageable pageable) {
-        var products = productService.getAllProducts(pageable);
+    public ResponseEntity<Page<ProductDtoResponse>> getAllProducts(
+            @RequestParam(defaultValue = "") String name, Pageable pageable) {
+        var products = productService.getAllProducts(name, pageable);
         return ResponseEntity.ok(products);
     }
 
