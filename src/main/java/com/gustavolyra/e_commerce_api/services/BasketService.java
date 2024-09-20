@@ -56,7 +56,6 @@ public class BasketService {
             if (!basket.getUser().getUsername().equals(user.getUsername()) && !isAdmin) {
                 throw new ForbiddenException("You can't delete other user's basket");
             }
-
             basketRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
             log.error("Could not delete basket with id: {}", id);
