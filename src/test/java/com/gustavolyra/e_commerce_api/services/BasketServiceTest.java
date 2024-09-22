@@ -8,6 +8,8 @@ import com.gustavolyra.e_commerce_api.factory.UserFactory;
 import com.gustavolyra.e_commerce_api.repositories.BasketItemRepository;
 import com.gustavolyra.e_commerce_api.repositories.BasketRepository;
 import com.gustavolyra.e_commerce_api.repositories.ProductRepository;
+import com.gustavolyra.e_commerce_api.services.exceptions.ForbiddenException;
+import com.gustavolyra.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,8 @@ public class BasketServiceTest {
         Mockito.when(basketRepository.findById(validId)).thenReturn(Optional.ofNullable(basket));
         adminUser = UserFactory.createAdminUser();
         Mockito.when(userService.findUserFromAuthenticationContext()).thenReturn(adminUser);
+
+
     }
 
 
@@ -62,5 +66,22 @@ public class BasketServiceTest {
         Assertions.assertDoesNotThrow(() -> basketService.deleteBasketById(validId));
     }
 
+    @Test
+    void deleteByIdShouldThrowResourceNotFoundExceptionWhenInvalidId() {
+        // Act
+        // Assert
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> basketService.deleteBasketById(invalidId));
+    }
+
+    @Test
+    void deleteByIdShouldThrowForbiddenExceptionWhenInvalidUser() {
+        //Arrange
+        Mockito.when(userService.findUserFromAuthenticationContext()).thenReturn(UserFactory.createNonAdminUser());
+        // Act
+        // Asseret
+        Assertions.assertThrows(ForbiddenException.class, () -> basketService.deleteBasketById(validId));
+    }
+
 
 }
+

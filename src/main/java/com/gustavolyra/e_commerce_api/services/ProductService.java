@@ -40,7 +40,7 @@ public class ProductService {
         this.commentRepository = commentRepository;
     }
 
-    @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize + #name")
+    @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize + #name + #pageable.sort")
     @Transactional(readOnly = true)
     public Page<ProductDtoResponse> getAllProducts(String name, Pageable pageable) {
         if (name == null) {
